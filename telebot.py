@@ -262,7 +262,7 @@ async def back_to_main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     return MAINMENU_STATE
 
 def main() -> None:
-    bot_token = os.getenv("TELEGRAM_BOT_TOKEN") or '8149950337:AAG6Hj3VxBtKYAQFrxmeRgszJB-tUGOkoLE'
+    bot_token = os.getenv("TELEGRAM_BOT_TOKEN")
     application = Application.builder().token(bot_token).build()
     conv_handler = ConversationHandler(
         entry_points=[
