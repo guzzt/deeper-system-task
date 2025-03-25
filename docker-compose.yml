@@ -18,7 +18,7 @@ services:
       - mongodb
     environment:
       - MONGO_URI=mongodb://mongodb:27017
-      - TELEGRAM_BOT_TOKEN=YOUR_BOT_TOKEN
+      - TELEGRAM_BOT_TOKEN=7851898418:AAFFCCz0REyCp_rdZ5ORbcrwyXv3hR6VmeU
     command: ["python", "telebot.py"]
 
 volumes:

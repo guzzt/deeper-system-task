@@ -104,6 +104,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     db_user = users.find_one({"_id": user.id})
     if not db_user:
         new_user(user)
+        db_user = users.find_one({"_id": user.id})
     context.user_data["user_info"] = db_user
     reply_markup = InlineKeyboardMarkup(main_options_keyboard)
     await update.message.reply_text(
@@ -144,14 +145,14 @@ async def withdraw(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     if user_info["balance"] == 0:
         await query.edit_message_text(
             "You have no balance to withdraw.",
-            reply_markup=InlineKeyboardMarkup(back_keyboard),
+            reply_markup=InlineKeyboardMarkup(main_options_keyboard),
             parse_mode=ParseMode.HTML
         )
         return MAINMENU_STATE
 
     reply_markup = InlineKeyboardMarkup(back_keyboard)
     await query.edit_message_text(
-        "Please enter the deposit amount:",
+        "Please enter the withdraw amount:",
         reply_markup=reply_markup,
         parse_mode=ParseMode.HTML
     )
@@ -165,7 +166,7 @@ async def make_withdraw(update: Update, context: ContextTypes.DEFAULT_TYPE) -> i
         user_info = context.user_data["user_info"] = users.find_one({"_id": update.message.from_user.id})
         if user_info["balance"] < amount:
             await update.message.reply_text(
-                "Insufficient balance.",
+                "Insufficient balance. Please enter a valid amount to withdraw from your balance.\nYour balance: {}".format(user_info["balance"]),
                 parse_mode=ParseMode.HTML
             )
             return WITHDRAW_STATE
@@ -222,7 +223,6 @@ async def confirm(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     await query.answer()
     user_info = context.user_data["user_info"]
     amount = context.user_data["amount"]
-    print(context.user_data)
     if context.user_data["operation"] == DEPOSIT_OP:
         add_deposit(user_info["_id"], amount)
         await query.edit_message_text(
@@ -262,7 +262,7 @@ async def back_to_main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     return MAINMENU_STATE
 
 def main() -> None:
-    bot_token = os.getenv("TELEGRAM_BOT_TOKEN")
+    bot_token = os.getenv("TELEGRAM_BOT_TOKEN") or '8149950337:AAG6Hj3VxBtKYAQFrxmeRgszJB-tUGOkoLE'
     application = Application.builder().token(bot_token).build()
     conv_handler = ConversationHandler(
         entry_points=[
